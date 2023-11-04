@@ -32,13 +32,13 @@ import requests
 disable_warnings()
 
 def get_ip():
-    response = requests.get('https://api64.ipify.org?format=json').json()
+    response = requests.get('https://api64.ipify.org?format=json', timeout=2).json()
     return response["ip"]
 
 def geoIP(ip):
-        response = requests.get(f'https://ipapi.co/{ip}/json/').json()
+        response = requests.get(f'https://ipapi.co/{ip}/json/',timeout=2).json()
         if response['error']:
-            response = requests.get(f'https://ipapi.co/{get_ip()}/json/').json()
+            response = requests.get(f'https://ipapi.co/{get_ip()}/json/',timeout=2).json()
         
         location = {
             "city": response["city"],
