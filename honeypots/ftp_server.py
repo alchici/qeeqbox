@@ -13,7 +13,7 @@
 from warnings import filterwarnings
 filterwarnings(action='ignore', module='.*OpenSSL.*')
 
-from twisted.protocols.ftp import log, ASCIIConsumerWrapper, FTPCmdError, PermissionDeniedError, toSegments, InvalidPath, BadCmdSequenceError, FTPShell, FTPAnonymousShell, FTPFactory, FTP, AUTH_FAILURE, IFTPShell, GUEST_LOGGED_IN_PROCEED, AuthorizationError, BAD_CMD_SEQ, USR_LOGGED_IN_PROCEED
+from twisted.protocols.ftp import log, AnonUserDeniedError, ASCIIConsumerWrapper, FTPCmdError, PermissionDeniedError, toSegments, InvalidPath, BadCmdSequenceError, FTPShell, FTPAnonymousShell, FTPFactory, FTP, AUTH_FAILURE, IFTPShell, GUEST_LOGGED_IN_PROCEED, AuthorizationError, BAD_CMD_SEQ, USR_LOGGED_IN_PROCEED
 from twisted.internet import reactor, defer
 from twisted.cred.portal import Portal
 from twisted.cred import portal, credentials, checkers
@@ -222,6 +222,11 @@ RESPONSE = {
 #         }
 #         return location
 
+class CustomFTPAnonymousShell(FTPAnonymousShell):
+    def openForReading(self, path):
+        path = self._path(path)
+        return defer.fail(PermissionDeniedError())
+
 
 class QFTPServer():
     def __init__(self, **kwargs):
@@ -262,7 +267,7 @@ class QFTPServer():
                 for iface in interfaces:
                     if iface is IFTPShell:
                         if avatarId is checkers.ANONYMOUS:
-                            avatar = FTPAnonymousShell(self.anonymousRoot)
+                            avatar = CustomFTPAnonymousShell(self.anonymousRoot)
                         else:
                             avatar = FTPShell(filepath.FilePath("/code/user"))
                         return IFTPShell, avatar, getattr(avatar, 'logout', lambda: None)
