@@ -1,0 +1,25 @@
+{
+    "logs": "terminal,db_postgres",
+    "logs_location": "",
+    "syslog_address":"",
+    "syslog_facility":0,
+    "postgres":"//changeme027a088931d22:changeme0f40773877963@localhost:9999/chameleon",
+    "sqlite_file":"",
+    "db_options":[],
+    "sniffer_filter": "not port 9999 and not port 514",
+    "sniffer_interface": "wlp0s20f3",
+    "honeypots": {
+        "ftp": {
+            "port": 21,
+            "username": "test",
+            "password": "test",
+            "options":["capture_commands"]
+        },
+        "https": {
+            "port": 443,
+            "username": "test",
+            "password": "test",
+            "options":["capture_commands"]
+        }
+    }
+}
