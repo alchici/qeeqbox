@@ -15,7 +15,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "iteration": 1699100129512,
+  "iteration": 1699253211777,
   "links": [],
   "panels": [
     {
@@ -527,7 +527,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT data->>'src_ip' as ip,\n       data->>'action' as method,\n       data->'data'->>'uri' as uri,\n       data->>'data' as headers\nFROM   servers_table\nWHERE  $__timeFilter(date) AND (data->>'action' LIKE '%GET%' OR data->>'action' LIKE '%POST%') AND data->> 'server' LIKE '%https_server%' AND data->>'src_ip' <> ''  AND (data->>'src_ip') LIKE '%$IP%'\nORDER BY id DESC",
+          "rawSql": "SELECT data->'src_ip'->>'ip' as ip,\n       data->'data'->> 'method' as method,\n       data->'data'->>'uri' as uri,\n       data->>'data' as headers\nFROM   servers_table\nWHERE  $__timeFilter(date) AND data->>'action' LIKE 'connection' AND data->> 'server' LIKE '%https_server%' AND data->>'src_ip' <> ''  AND (data->>'src_ip') LIKE '%$IP%'\nORDER BY id DESC",
           "refId": "A",
           "select": [
             [
@@ -755,6 +755,222 @@
       "timeFrom": null,
       "timeShift": null,
       "title": "Connections",
+      "type": "table"
+    },
+    {
+      "datasource": null,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": null,
+            "displayMode": "auto",
+            "filterable": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "username"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": null
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "country"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 1043
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "uri"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": null
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 10,
+        "x": 0,
+        "y": 22
+      },
+      "id": 38,
+      "options": {
+        "showHeader": true,
+        "sortBy": []
+      },
+      "pluginVersion": "7.5.7",
+      "targets": [
+        {
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT data->>'src_ip' as ip,\n       data->'name' as name,\n       data->'email' as email,\n       data->'subject' as subject,\n       data->'message' as message\nFROM   servers_table\nWHERE  $__timeFilter(date) AND data->>'action' LIKE 'contact' AND data->> 'server' LIKE '%https_server%' AND data->>'src_ip' <> ''  AND (data->>'src_ip') LIKE '%$IP%'\nORDER BY id DESC",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "timeColumn": "time",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Contact POST Requests",
+      "type": "table"
+    },
+    {
+      "datasource": null,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": null,
+            "displayMode": "auto",
+            "filterable": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "username"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": null
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "country"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 1043
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "uri"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": null
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 14,
+        "x": 10,
+        "y": 22
+      },
+      "id": 39,
+      "options": {
+        "showHeader": true,
+        "sortBy": []
+      },
+      "pluginVersion": "7.5.7",
+      "targets": [
+        {
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT data->'data'->>'uri' as uri,\n       data->'data'->>'method' as method,\n       COUNT(*) as total\nFROM   servers_table\nWHERE  $__timeFilter(date) AND data->>'action' LIKE '%connection%' AND (data->> 'server' LIKE '%https_server%' OR data->> 'server' LIKE '%ftp_server%') AND data->>'src_ip' <> ''  AND (data->>'src_ip') LIKE '%$IP%'\nGROUP BY data->'data'->>'uri',\n       data->'data'->>'method'\nORDER BY total DESC;",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "timeColumn": "time",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Most requested URIs",
       "type": "table"
     }
   ],

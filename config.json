@@ -7,7 +7,7 @@
     "sqlite_file":"",
     "db_options":[],
     "sniffer_filter": "not port 9999 and not port 514",
-    "sniffer_interface": "wlp0s20f3",
+    "sniffer_interface": "eth0",
     "honeypots": {
         "ftp": {
             "port": 21,
@@ -19,7 +19,7 @@
             "port": 443,
             "username": "test",
             "password": "test",
-            "options":["capture_commands"]
+            "options":["capture_commands", "fix_get_client_ip"]
         }
     }
 }

@@ -18,8 +18,10 @@ from cgi import FieldStorage
 from requests.packages.urllib3 import disable_warnings
 from tempfile import gettempdir, _get_candidate_names
 from twisted.internet import reactor, ssl
-from twisted.web.server import Site
+from twisted.web.server import Site, NOT_DONE_YET
+from twisted.web import static
 from twisted.web.resource import Resource
+from twisted.web.util import Redirect
 from random import choice
 from twisted.python import log as tlog
 from subprocess import Popen
@@ -97,146 +99,94 @@ class QHTTPSServer():
     def https_server_main(self):
         _q_s = self
 
-        class MainResource(Resource):
+        class Home(Resource):
+            isLeaf = False
 
-            isLeaf = True
-            home_file = b'''
-<!DOCTYPE html>
-<html>
-	<head>
-		<link rel='stylesheet' href='https://stackpath.bootstrapcdn.com/bootstrap/4.0.0-beta.3/css/bootstrap.min.css' />
-		<link rel='stylesheet' href='https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css' />
-		<meta http-equiv='content-type' content='text/html;charset=utf-8' />
-		<title>Login</title>
-		<style>
-			body,html{height: 100%;text-align: center;},
-		</style>
-	</head>
-	<body>
-		<div class='container-fluid h-100'>
-			<div class='row justify-content-center h-100 align-items-center'>
-			<div class='col col-xl-3'>
-				<b>We'll back soon..</b>
-			</div>
-			</div>
-		</div>
-	</body>
-</html>'''
+            allowedMethods = ('GET','POST')
 
-            login_file = b'''<!DOCTYPE html>
-<html>
-	<head>
-		<link rel='stylesheet' href='https://stackpath.bootstrapcdn.com/bootstrap/4.0.0-beta.3/css/bootstrap.min.css' />
-		<link rel='stylesheet' href='https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css' />
-		<meta http-equiv='content-type' content='text/html;charset=utf-8' />
-		<title>Login</title>
-		<style>body,html {height: 100%;}</style>
-	</head>
-	<body>
-		<div class='container-fluid h-100'>
-			<div class='row justify-content-center h-100 align-items-center'>
-			<div class='col col-xl-3'>
-				<form id='login' action='' method='post'>
-					<div class='form-group'>
-						<input class='form-control form-control-sm' name='username' type='text' placeholder='username' id='username'>
-					</div>
-					<div class='form-group'>
-						<input class='form-control form-control-sm' name='password' type='password' placeholder='password' id='password'>
-					</div>
-					<div class='form-group'>
-						<button class='btn btn-default btn-sm btn-block' type='submit'>login</button>
-					</div>
-				</form>
-			</div>
-			</div>
-		</div>
-	</body>
-</html>
-'''
-
-            def check_bytes(self, string):
-                if isinstance(string, bytes):
-                    return string.decode()
-                else:
-                    return str(string)
-
-            def render(self, request):
-
-                headers = {}
-                client_ip = ""
-
-                with suppress(Exception):
-                    def check_bytes(string):
+            def getChild(self, name, request):
+               
+                def check_bytes(string):
                         if isinstance(string, bytes):
                             return string.decode()
                         else:
                             return str(string)
+               
+                headers = {}
+                client_ip = ""
 
-                    for item, value in dict(request.requestHeaders.getAllRawHeaders()).items():
-                        headers.update({check_bytes(item): ','.join(map(check_bytes, value))})
+                for item, value in dict(request.requestHeaders.getAllRawHeaders()).items():
+                    headers.update({check_bytes(item): ','.join(map(check_bytes, value))})
                     headers.update({'method': check_bytes(request.method)})
                     headers.update({'uri': check_bytes(request.uri)})
-
-                if 'fix_get_client_ip' in _q_s.options:
-                    with suppress(Exception):
-                        raw_headers = dict(request.requestHeaders.getAllRawHeaders())
-                        if b'X-Forwarded-For' in raw_headers:
-                            client_ip = check_bytes(raw_headers[b'X-Forwarded-For'][0])
-                        elif b'X-Real-IP' in raw_headers:
-                            client_ip = check_bytes(raw_headers[b'X-Real-IP'][0])
-
+                
                 if client_ip == "":
                     client_ip = request.getClientAddress().host
 
-                with suppress(Exception):
-                    if "capture_commands" in _q_s.options:
-                        _q_s.logs.info({'server': 'https_server', 'action': 'connection', 'src_ip': {"ip": client_ip, "geo": geoIP(client_ip)}, 'src_port': request.getClientAddress().port, 'dest_ip': _q_s.ip, 'dest_port': _q_s.port, 'data': headers})
-                    else:
-                        _q_s.logs.info({'server': 'https_server', 'action': 'connection', 'src_ip': client_ip, 'src_port': request.getClientAddress().port, 'dest_ip': _q_s.ip, 'dest_port': _q_s.port})
+                geo_test = {
+                    "city": "Valencia",
+                    "region": "Valencia",
+                    "country": "Spain",
+                    "country_code": "ESP",
+                    "latitude": "33.33",
+                    "longitud": "33.33",
+                    "asn": "AStest",
+                    "org": "Test ISP"
+                }
 
-                if _q_s.mocking_server != '':
-                    request.responseHeaders.removeHeader('Server')
-                    request.responseHeaders.addRawHeader('Server', _q_s.mocking_server)
+                # _q_s.logs.info({'server': 'https_server', 'action': 'connection', 'src_ip': {"ip": client_ip, "geo": geoIP(client_ip)}, 'src_port': request.getClientAddress().port, 'dest_ip': _q_s.ip, 'dest_port': _q_s.port, 'data': headers})
+                _q_s.logs.info({'server': 'https_server', 'action': 'connection', 'src_ip': {"ip": client_ip, "geo": geo_test}, 'src_port': request.getClientAddress().port, 'dest_ip': _q_s.ip, 'dest_port': _q_s.port, 'data': headers})
 
 
-                if request.method == b'GET' or request.method == b'POST':
-                    _q_s.logs.info({'server': 'https_server', 'action': request.method.decode(), 'src_ip': client_ip, 'src_port': request.getClientAddress().port, 'dest_ip': _q_s.ip, 'dest_port': _q_s.port, 'data': headers})
- 
+                if request.method == b"POST":
+                    self.headers = request.getAllHeaders()  
 
+                    if request.uri == b"/web/contact.html":
+                        
+                        form = FieldStorage(fp=request.content, headers=self.headers, environ={'REQUEST_METHOD': 'POST', 'CONTENT_TYPE': self.headers[b'content-type'], })
 
-                if request.method == b'GET':
-                    if request.uri == b'/login.html':
-                        if _q_s.username != '' and _q_s.password != '':
-                            request.responseHeaders.addRawHeader('Content-Type', 'text/html; charset=utf-8')
-                            return self.login_file
+                        name_field = form['name'].value
+                        email = form['email'].value
+                        subject = form['subject'].value
+                        message = form['message'].value
 
-                    request.responseHeaders.addRawHeader('Content-Type', 'text/html; charset=utf-8')
-                    return self.login_file
+                        _q_s.logs.info({'server': 'https_server', 'action': 'contact', 'src_ip': client_ip, 'src_port': request.getClientAddress().port, 'name': name_field, 'email': email, 'subject': subject, 'message': message, 'dest_ip': _q_s.ip, 'dest_port': _q_s.port})
 
-                elif request.method == b'POST':
-                    self.headers = request.getAllHeaders()
-                    if request.uri == b'/login.html' or b'/':
-                        if _q_s.username != '' and _q_s.password != '':
-                            form = FieldStorage(fp=request.content, headers=self.headers, environ={'REQUEST_METHOD': 'POST', 'CONTENT_TYPE': self.headers[b'content-type'], })
-                            if 'username' in form and 'password' in form:
-                                username = self.check_bytes(form['username'].value)
-                                password = self.check_bytes(form['password'].value)
-                                status = 'failed'
-                                if username == _q_s.username and password == _q_s.password:
-                                    username = _q_s.username
-                                    password = _q_s.password
-                                    status = 'success'
-                                _q_s.logs.info({'server': 'https_server', 'action': 'login', 'status': status, 'src_ip': client_ip, 'src_port': request.getClientAddress().port, 'username': username, 'password': password, 'dest_ip': _q_s.ip, 'dest_port': _q_s.port})
+                        return Redirect(b"/web/contact.html")
+                    
+                    elif request.uri == b"/web/login.html":
+                        
+                        form = FieldStorage(fp=request.content, headers=self.headers, environ={'REQUEST_METHOD': 'POST', 'CONTENT_TYPE': self.headers[b'content-type'], })
 
-                    request.responseHeaders.addRawHeader('Content-Type', 'text/html; charset=utf-8')
-                    return self.home_file
-                else:
-                    request.responseHeaders.addRawHeader('Content-Type', 'text/html; charset=utf-8')
-                    return self.home_file
+                        username = form['username'].value
+                        password = form['password'].value
+
+                        _q_s.logs.info({'server': 'https_server', 'action': 'login', 'status': 'failed', 'src_ip': client_ip, 'src_port': request.getClientAddress().port, 'username': username, 'password': password, 'dest_ip': _q_s.ip, 'dest_port': _q_s.port})
+
+                        return Redirect(b"/web/login.html")
+
+                if name == b"":
+                    return Redirect(b"/web")
+
+                if name.decode() in self.children:
+                    return self.children[name.decode()]
+                
+                return Redirect(b'/web/404.html')
+
+            def render(self, request):
+                return b"<html>Hello, world!</html>"
 
         self.CreateCert('localhost', self.key, self.cert)
         ssl_context = ssl.DefaultOpenSSLContextFactory(self.key, self.cert)
-        reactor.listenSSL(self.port, Site(MainResource()), ssl_context)
+
+
+        class CustomFile(static.File):
+            childNotFound = Redirect(b'/web/404.html')
+
+        root = Home()
+        root.putChild('web', CustomFile(b'./web'))
+        # root = static.File(b'./webpage')
+        reactor.listenSSL(self.port, Site(root), ssl_context)
         reactor.run()
 
     def run_server(self, process=False, auto=False):
