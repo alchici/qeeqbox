@@ -81,12 +81,12 @@ class QHTTPSServer():
         pk.generate_key(crypto.TYPE_RSA, 2048)
         c = crypto.X509()
         c.get_subject().C = 'US'
-        c.get_subject().ST = 'OR'
-        c.get_subject().L = 'None'
-        c.get_subject().O = 'None'
-        c.get_subject().OU = 'None'
-        c.get_subject().CN = next(_get_candidate_names())
-        c.set_serial_number(0)
+        c.get_subject().ST = 'New York'
+        c.get_subject().L = 'New York'
+        c.get_subject().O = 'Ivywood University'
+        c.get_subject().OU = 'Ivywood University'
+        c.get_subject().CN = 'www.ivy.uni.com'
+        c.set_serial_number(0x0A3F2B6D7E9C48)
         before, after = (0, 60 * 60 * 24 * 365 * 2)
         c.gmtime_adj_notBefore(before)
         c.gmtime_adj_notAfter(after)
@@ -106,6 +106,8 @@ class QHTTPSServer():
 
             def getChild(self, name, request):
                
+                request.setHeader('server', 'nginx/1.22.1')
+
                 def check_bytes(string):
                         if isinstance(string, bytes):
                             return string.decode()
