@@ -1,6 +1,6 @@
 import snap7
 client = snap7.client.Client()
-client.connect("127.0.0.1", 0, 0, 102)
+client.connect("193.70.114.151", 0, 0, 102)
 
 def strip_bytes(data, byte_to_strip):
     start = 0

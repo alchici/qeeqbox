@@ -430,6 +430,7 @@ class QFTPServer():
                 @rtype: L{Deferred}
                 @return: a L{Deferred} which will be fired when the transfer is done.
                 """
+                _q_s.logs.info(path)
                 if self.dtpInstance is None:
                     raise BadCmdSequenceError("PORT or PASV required before RETR")
 
@@ -455,20 +456,38 @@ class QFTPServer():
                     cons = self.dtpInstance
 
                 def cbSent(result):
+                    _q_s.logs.info("Sent: ")
+                    _q_s.logs.info(result)
                     return (TXFR_COMPLETE_OK,)
 
                 def ebSent(err):
                     log.msg("Unexpected error attempting to transmit file to client:")
                     log.err(err)
+                    _q_s.logs.info("Error send: ")
+                    _q_s.logs.info(err)
                     if err.check(FTPCmdError):
                         return err
                     return (CNX_CLOSED_TXFR_ABORTED,)
 
                 def cbOpened(file):
                     # Tell them what to doooo
+                    _q_s.logs.info("Opened: ")
+                    _q_s.logs.info(file)
                     if self.dtpInstance.isConnected:
-                        self.reply(FILE_STATUS_OK_OPEN_DATA_CNX_RETR, path, os.path.getsize(path))
+                        _q_s.logs.info("1")
+                        _q_s.logs.info(path)
+                        _q_s.logs.info(os.getcwd())
+                        _q_s.logs.info(self.workingDirectory)
+                        file_path = "/code/user/" + "/".join(self.workingDirectory) + "/" + path
+                        _q_s.logs.info(file_path)
+                        try:
+                            _q_s.logs.info(os.path.getsize(file_path))
+                        except Exception as error:
+                            print(error) # An exception occurred: division by zero
+
+                        self.reply(FILE_STATUS_OK_OPEN_DATA_CNX_RETR, path, os.path.getsize(file_path))
                     else:
+                        _q_s.logs.info("2")
                         self.reply(FILE_STATUS_OK_OPEN_DATA_CNX)
 
                     d = file.send(cons)
@@ -476,6 +495,8 @@ class QFTPServer():
                     return d
 
                 def ebOpened(err):
+                    _q_s.logs.info("Error open: ")
+                    _q_s.logs.info(err)
                     if not err.check(
                         PermissionDeniedError, FileNotFoundError, IsADirectoryError
                     ):
