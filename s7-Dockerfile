@@ -1,0 +1,52 @@
+# FROM python:3.10
+
+# RUN apt-get update 
+
+# # RUN pip3 install python-snap7
+
+# # COPY s7-code code
+
+# # WORKDIR code
+
+# # ENTRYPOINT  ["python3", "s7_server.py"]
+
+# # RUN apt-get update && apt-get install software-properties-common python3-launchpadlib -y && apt-get update
+
+# # RUN ls /etc/apt/sources.list.d/
+
+# # RUN add-apt-repository ppa:gijzelaar/snap7 && \
+# #     apt-get update 
+
+# # RUN ls /etc/apt/sources.list.d/
+
+# # RUN echo $(cat /etc/apt/sources.list.d/gijzelaar-ubuntu-snap7-bookworm.list)
+
+# # RUN sed -i 's/jammy/focal/g' /etc/apt/sources.list.d/gijzelaar-ubuntu-snap7-jammy.list
+
+# # RUN apt-get install libsnap7-dev libsnap7-1
+
+# COPY snap7-full-1.4.2.7z snap7-full-1.4.2.7z
+
+# COPY python-snap7-1.3 python-snap7-1.3
+
+# RUN cd python-snap7-1.3 && pip3 install .
+
+# COPY s7-code code
+
+# WORKDIR code
+
+
+FROM ubuntu:20.04
+ENV DEBIAN_FRONTEND=noninteractive
+RUN apt update \
+    && apt install -y software-properties-common python3-pip \
+    && add-apt-repository ppa:gijzelaar/snap7 \
+    && apt update \
+    && apt install -y libsnap7-dev libsnap7-1
+ADD python-snap7-1.3 /python-snap7
+ADD s7-code s7-code
+WORKDIR /python-snap7
+RUN pip3 install .
+WORKDIR /s7-code
+ENTRYPOINT  ["python3", "s7_server.py"]
+

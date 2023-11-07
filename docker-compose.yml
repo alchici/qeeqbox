@@ -40,6 +40,14 @@ services:
     depends_on:
       - postgres
 
+  s7:
+    build:
+      context: .
+      dockerfile: ./s7-Dockerfile
+    container_name: s7
+    ports:
+      - '102:102'
+
 networks:
   frontend:
     internal: false
