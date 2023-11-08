@@ -1,6 +1,8 @@
 import snap7
+from snap7.types import Areas
 client = snap7.client.Client()
-client.connect("193.70.114.151", 0, 0, 102)
+# client.connect("193.70.114.151", 0, 0, 102)
+client.connect("127.0.0.1", 0, 0, 102)
 
 def strip_bytes(data, byte_to_strip):
     start = 0
@@ -55,6 +57,8 @@ print(client.get_cpu_state())
 # print(client.read_szl_list())
 
 # szl_list(client)
+szl(client,0x0011,0x0000)
+szl(client,0x001c,0x0000)
 
-szl(client,0x0011,0x0001)
+print(client.read_area(Areas.DB, 0, 100, 30))
 
