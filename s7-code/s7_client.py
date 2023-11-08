@@ -52,13 +52,13 @@ def szl(client, szl_num, index):
 
 print(client.get_connected())
 print(client.get_cpu_info())
-print(client.get_cpu_state())
+# print(client.get_cpu_state())
 # print(client.db_read(0,0,8))
 # print(client.read_szl_list())
 
 # szl_list(client)
-szl(client,0x0011,0x0000)
+# szl(client,0x0011,0x0000)
 szl(client,0x001c,0x0000)
 
-print(client.read_area(Areas.DB, 0, 100, 30))
+# print(client.read_area(Areas.DB, 0, 100, 30))
 

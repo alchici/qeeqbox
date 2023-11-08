@@ -34,16 +34,16 @@ services:
       dockerfile: ./honeypots-Dockerfile
     container_name: honeypots
     network_mode: "host"
-    ports:
-      - '21:21'
-      - '443:443'
+    # ports:
+    #   - '21:21'
+    #   - '443:443'
     depends_on:
       - postgres
 
   s7:
     build:
       context: .
-      dockerfile: ./s7-Dockerfile
+      dockerfile: ./s7plus-Dockerfile
     container_name: s7
     ports:
       - '102:102'

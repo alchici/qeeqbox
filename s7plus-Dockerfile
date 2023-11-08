@@ -41,6 +41,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 RUN apt update && apt-get install make build-essential python3-pip -y
     
 COPY snap7-full-1.4.2 snap
+#COPY snap7-git snap
 RUN cd /snap/build/unix && \        
     make -f x86_64_linux.mk install 
 
