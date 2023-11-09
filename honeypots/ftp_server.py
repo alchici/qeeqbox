@@ -623,7 +623,7 @@ class QFTPServer():
 
             
 
-        p = Portal(CustomFTPRealm("/code/user/credentials"), [CustomAccess()])
+        p = Portal(CustomFTPRealm("/code/user/"), [CustomAccess()])
         factory = FTPFactory(p)
         p.registerChecker(AllowAnonymousAccess())
         factory.protocol = CustomFTPProtocol

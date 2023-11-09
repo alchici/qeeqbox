@@ -11,14 +11,14 @@
     "honeypots": {
         "ftp": {
             "port": 21,
-            "username": "test",
-            "password": "test",
+            "username": "jdoe",
+            "password": "qwerty",
             "options":["capture_commands"]
         },
         "https": {
             "port": 443,
-            "username": "test",
-            "password": "test",
+            "username": "sysadmin",
+            "password": "tigger",
             "options":["capture_commands", "fix_get_client_ip"]
         }
     }

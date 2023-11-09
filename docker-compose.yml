@@ -9,8 +9,8 @@ services:
     ports:
       - '9999:9999'
     environment:
-      POSTGRES_USER: changeme027a088931d22
-      POSTGRES_PASSWORD: changeme0f40773877963
+      POSTGRES_USER: changeme027a023931d22
+      POSTGRES_PASSWORD: changeme0f40323877963
     logging:
         driver: none
   
@@ -23,8 +23,8 @@ services:
     links:
       - postgres
     environment:
-      GF_SECURITY_ADMIN_USER: changeme457f6460cb287
-      GF_SECURITY_ADMIN_PASSWORD: changemed23b8cc6a20e0
+      GF_SECURITY_ADMIN_USER: tareaEnigmaHoneypotsGrafico
+      GF_SECURITY_ADMIN_PASSWORD: tareaEnigmaHoneypotsGrafico6583682147104328
     logging:
         driver: none
   

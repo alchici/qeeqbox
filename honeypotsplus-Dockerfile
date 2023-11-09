@@ -1,0 +1,15 @@
+FROM python:3.10
+
+RUN apt-get update
+
+COPY . /code
+
+RUN cd code && pip3 install .
+
+RUN cd code/twisted && pip3 install .
+
+WORKDIR code
+
+COPY user user
+
+ENTRYPOINT  ["python3", "-m", "honeypots", "--config", "config.json", "--chameleon"] 

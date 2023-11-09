@@ -1,0 +1,34 @@
+ /
+  - Ivywood_University/
+    - Class_Materials/
+      - Introduction_to_Cybersecurity.pdf
+      - Advanced_Malware_Research.doc
+      - Administration_Passwords.txt
+    - Student_Assignments/
+      - Assignment_1.pdf
+      - Assignment_2.doc
+    - Student_Grades/
+      - Physics_I_Grades.pdf
+      - Advanced_Programming_Grades.doc
+    - Faculty/
+      - Professor_John_Doe/
+        - Projects/
+          - Research_Project.pdf
+        - Curriculum_Vitae.doc
+      - Professor_Jane_Smith/
+        - Curriculum_Vitae.doc
+    - Activity_Logs/
+      - access.log
+      - error.log
+  - System/
+    - User_Data/
+      - User_Database.csv
+      - User_Credentials.txt
+    - Config/
+      - FTP_Config.conf
+    - Scripts/
+      - Run_This_Script.sh
+      - Execute_Me.bat
+
+
+
