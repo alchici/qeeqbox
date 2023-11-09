@@ -15,7 +15,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "iteration": 1699253211777,
+  "iteration": 1699532169685,
   "links": [],
   "panels": [
     {
@@ -97,6 +97,30 @@
                 }
               }
             ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "anonymous"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Anonymous"
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "orange",
+                      "value": null
+                    }
+                  ]
+                }
+              }
+            ]
           }
         ]
       },
@@ -129,7 +153,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT count(id) filter (WHERE data->>'status' LIKE '%success%' AND data->>'action' LIKE '%login%') AS success,\n       count(id) filter (WHERE data->>'status' LIKE '%failed%' AND data->>'action' LIKE '%login%') AS failed\nFROM   servers_table\nWHERE  $__timeFilter(date) AND data->>'server' LIKE '%ftp_server%' AND data->>'status'  <> '' AND (data->>'src_ip') LIKE '%$IP%'",
+          "rawSql": "SELECT count(id) filter (WHERE data->>'status' LIKE '%success%' AND data->>'anon' LIKE '%false%' AND data->>'action' LIKE '%login%') AS success,\n       count(id) filter (WHERE data->>'status' LIKE '%success%' AND data->>'anon' LIKE '%true%' AND data->>'action' LIKE '%login%') AS anonymous,\n       count(id) filter (WHERE data->>'status' LIKE '%failed%' AND data->>'action' LIKE '%login%') AS failed\nFROM   servers_table\nWHERE  $__timeFilter(date) AND data->>'server' LIKE '%ftp_server%' AND data->>'status'  <> '' AND (data->>'src_ip') LIKE '%$IP%'",
           "refId": "A",
           "select": [
             [

@@ -336,6 +336,7 @@ class QFTPServer():
                 username = self.check_bytes(self._user)
                 password = self.check_bytes(password)
                 status = 'failed'
+                anon = 'false'
                 if (username == _q_s.username and password == _q_s.password):
                     username = _q_s.username
                     password = _q_s.password
@@ -345,8 +346,9 @@ class QFTPServer():
                     username = self.factory.userAnonymous
                     password = ''
                     status = 'success'
+                    anon = 'true'
 
-                _q_s.logs.info({'server': 'ftp_server', 'action': 'login', 'status': status, 'src_ip': self.transport.getPeer().host, 'src_port': self.transport.getPeer().port, 'dest_ip': _q_s.ip, 'dest_port': _q_s.port, 'username': username, 'password': password})
+                _q_s.logs.info({'server': 'ftp_server', 'action': 'login', 'status': status, 'anon': anon, 'src_ip': self.transport.getPeer().host, 'src_port': self.transport.getPeer().port, 'dest_ip': _q_s.ip, 'dest_port': _q_s.port, 'username': username, 'password': password})
 
                 if self.factory.allowAnonymous and self._user == self.factory.userAnonymous:
                     creds = credentials.Anonymous()
